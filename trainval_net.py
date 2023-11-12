@@ -46,14 +46,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pdb
 
-# _datasets_root = "/w/dandans/dataset_100doh_to_release/pascal_voc_format/VOCdevkit2007_handobj_100K/VOC2007"
-#_datasets_root = "/w/fouhey/hands2/allMerged6Blur/"
-#_datasets_root = "/home/evacheng/allMerged6Blur/"
 _datasets_root = "/home/evacheng/new_10k/"
 
-# _datasets_root = "/home/evacheng/allMerged5/"
-
-#split changed based on dataset //Feb 5 2023
 for d in ["TRAIN", "VAL"]:
     register_ho_pascal_voc(name=f'100DOH_hand_{d}', dirname=_datasets_root, split=d, year=2007, class_names=["hand", "targetobject", "secondobject"])
     MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='pascal_voc')
@@ -200,10 +194,6 @@ if __name__ == "__main__":
     args = default_argument_parser().parse_args()
 
     print("Command Line Args:", args)
-    # class_names = MetadataCatalog.get('100DOH_hand_train').thing_classes
-
-   
-
 
     launch(
         main,

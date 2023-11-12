@@ -23,7 +23,7 @@ __all__ = ["load_ho_voc_instances", "register_ho_pascal_voc"]
 
 # fmt: off
 CLASS_NAMES = (
-    "hand", "targetobject"
+    "hand", "firstobject", "secondobject"
 )
 
 
@@ -36,7 +36,6 @@ def get_mask(class_id, row_num, im_id, mask_dir, dirname):
         mask = cv2.imread(mask_d)
         L = len(mask)
     except:
-        # pdb.set_trace()
         try:
             im = cv2.imread(dirname+im_id)
             size = im.shape
@@ -58,7 +57,7 @@ def seg_to_poly(x,y,w,h,box_segments):
         return False
 
 
-    box = [x,y,w,h]
+    # box = [x,y,w,h]
     # box_segments = torch.zeros((im_w,im_h,1)).bool().cpu()
     # box_segments[box[1]:box[1]+box[3], box[0]:box[0]+box[2], :] = True
     contours, hierarchy = cv2.findContours(box_segments.astype(np.uint8), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -86,71 +85,37 @@ def load_ho_voc_instances(dirname: str, class_names = None,split = None):
         split (str): one of "train", "test", "val", "trainval"
         class_names: list or tuple of class names
     """
-    # list_dir = "/y/evacheng/COCO_split"
-    #updated with new split //Feb 3rd 2023
-    #list_dir = "/y/evacheng/allMerged6Splits"
-    #list_dir = "/home/evacheng/allMerged6Splits"
-    #list_dir = "/home/evacheng/10k_subset_splits"
-    #list_dir = "/home/evacheng/500EKSplits"
-
-
-    #list_dir = "/home/evacheng/allMerged6Splits"
-    #list_dir = "/y/evacheng/500EKSplits"
-    #mask_dir = "/home/evacheng/masks/"
-    list_dir = "/w/fouhey/hands2/allMerged6Splits"
-    #list_dir = "/y/evacheng/ten_K"
-    #list_dir = "/y/evacheng/500EKSplits"
-   
-    #mask_dir = "/y/ayhassen/allmerged/masks/"
-    
-    mask_dir = "/home/evacheng/masks/"
+ 
+    list_dir = "/home/evacheng/allMerged7Splits"
+    mask_dir = "/home/evacheng/maskv2/"
 
 
 
     dicts = []
 
-    count_im = 0
+    incorrect_grasp = []
 
     
 
     print(os.path.join(list_dir, split + ".txt"))
-    # with PathManager.open(os.path.join(dirname, "ImageSets", "Main", split + ".txt")) as f:
-    #     fileids = np.loadtxt(f, dtype=np.str)
+   
     with open(os.path.join(list_dir, split + ".txt")) as f:
         fileids = [line.rstrip('\n') for line in f.readlines()]
     
-   
-
-    # fileids = ["CC_000000202321.jpg", "EK_0047_P35_105_frame_0000031683.jpg"]
-
-    fileids = fileids[:100]
     
     for fileid in fileids:
-        #removed ".jpg" based on dataset format
-
-        #changed temporarily for testing on Blur data //Feb 23 2023
-        #change back for further implementation Note!
-        anno_file = os.path.join(dirname.replace("Blur", ""), fileid+".txt")
+       
+        
+        anno_file = os.path.join(dirname.replace("Blur",""), fileid+".txt")
         jpeg_file = os.path.join(dirname, fileid)
-
-
-
-        # pdb.set_trace()
-
-        # there_is_second_object = False
      
+
         if os.path.exists(jpeg_file):
             with PathManager.open(anno_file) as f:
                  annos = f.readlines()
 
             if len(annos) == 0:
-                # print("Ignore file "+ jpeg_file +" with no Annotations")
                 continue
-
-            # if count_im >7:
-            #     break
-            
-            # count_im = count_im+1
 
             r = {
                 "file_name": jpeg_file,
@@ -180,7 +145,6 @@ def load_ho_voc_instances(dirname: str, class_names = None,split = None):
                 contactState = 100
                 grasp = 100
 
-                # pdb.set_trace()
 
                 if "no_contact" in contact:
                     contactState = 0
@@ -207,15 +171,15 @@ def load_ho_voc_instances(dirname: str, class_names = None,split = None):
                     grasp = 4 
                 elif grasp_type == "Pre-Circ":
                     grasp = 5 
-                elif grasp_type == "Lat":
+                elif grasp_type == "Lat" or grasp_type == "Lateral":
                     grasp = 6
-                # elif grasp_type == "Exten":
-                #     grasp = 7 
                 elif grasp_type == "Other":
                     grasp = 7
                 else:
                     # pdb.set_trace()
                     print("error! Got: " + grasp_type)
+                    incorrect_grasp.append(jpeg_file.replace(dirname,""))
+
                     grasp = 100
 
 
@@ -338,16 +302,14 @@ def load_ho_voc_instances(dirname: str, class_names = None,split = None):
 
             r["annotations"] = instances
             dicts.append(r)
-
-            # try:
-            #     for i in range(len(instances)):
-            #         assert instances[i].__len__()>0
-            # except:
-            #     pdb.set_trace()
-            #     print("error in ho")
-        
-   
-    return dicts, fileids
+    
+    
+    if len(incorrect_grasp) != 0:
+        g = open("incorrect_grasp.txt", "w+")
+        g.writelines(incorrect_grasp)
+        g.close()
+    
+    return dicts
 
 
 def register_ho_pascal_voc(name, dirname, year, split, class_names=CLASS_NAMES):

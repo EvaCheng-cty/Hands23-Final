@@ -11,7 +11,6 @@ from detectron2.modeling.roi_heads.roi_heads import StandardROIHeads, select_for
 from detectron2.structures import Boxes, ImageList, Instances, pairwise_iou
 
 
-# from hodetector.modeling.roi_heads.z_head import build_z_head
 from hodetector.modeling.roi_heads.mlp_layer import build_z_head
 from hodetector.modeling.roi_heads.hand_side import build_h_head
 from hodetector.modeling.roi_heads.tool import build_t_head
@@ -120,8 +119,6 @@ class hoRCNNROIHeads(StandardROIHeads):
             
             return proposals, losses
         else:
-
-            # pdb.set_trace()
 
             pred_instances = self._forward_box(features, proposals)
             # During inference cascaded prediction is used: the mask and keypoints heads are only
@@ -552,13 +549,9 @@ class hoRCNNROIHeads(StandardROIHeads):
         pred_z = self.z_head(torch.flatten(PF, start_dim=0, end_dim=1))
         pred_h = self.h_head(z_feature[iou])
         pred_t = self.t_head(z_feature[iou])
-        pred_g = self.g_head(z_feature[iou]) #uncomment when start training grasp
+        pred_g = self.g_head(z_feature[iou])
         
         
-
-    
-       
-        # try:
         assert pred_z.shape[0] == torch.flatten(PL, start_dim=0, end_dim=1).shape[0]
         losses_inter = self.z_head.losses(pred_z, torch.flatten(PL, start_dim=0, end_dim=1))
 
