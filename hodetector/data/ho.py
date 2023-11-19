@@ -87,7 +87,7 @@ def load_ho_voc_instances(dirname: str, class_names = None,split = None):
     """
  
     list_dir = "/home/evacheng/allMerged7Splits"
-    mask_dir = "/home/evacheng/maskv2/"
+    mask_dir = "/home/evacheng/masks_samV1/"
 
 
 

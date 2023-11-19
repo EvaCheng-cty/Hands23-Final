@@ -46,8 +46,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pdb
 
-_datasets_root = "/home/evacheng/new_10k/"
+_datasets_root = "/home/evacheng/allMerged7Blur/"
 
+#split changed based on dataset //Feb 5 2023
 for d in ["TRAIN", "VAL"]:
     register_ho_pascal_voc(name=f'100DOH_hand_{d}', dirname=_datasets_root, split=d, year=2007, class_names=["hand", "targetobject", "secondobject"])
     MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='pascal_voc')
@@ -194,7 +195,7 @@ if __name__ == "__main__":
     args = default_argument_parser().parse_args()
 
     print("Command Line Args:", args)
-
+   
     launch(
         main,
         args.num_gpus,

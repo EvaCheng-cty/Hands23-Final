@@ -19,7 +19,7 @@ SOLVER:
   MAX_ITER: 5000000000 #640000
   CHECKPOINT_PERIOD: 5000 #80000
   IMS_PER_BATCH: 8
-OUTPUT_DIR: "/home/evacheng/mar_22_ptRend_all_lr_0.01_relation_0.1_other_0.1_new_grasp"
+OUTPUT_DIR: "/home/evacheng/final/final_on_sam"
 TEST:
   DETECTIONS_PER_IMAGE: 40
 DATALOADER:
