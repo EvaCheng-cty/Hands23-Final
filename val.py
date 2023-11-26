@@ -91,8 +91,8 @@ from hodetector.modeling import roi_heads
 # validation dataset 
 _datasets_root = "/launch/evacheng/datasets"
 
-#mask_source = "SAM"
-mask_source = "Ayda"
+mask_source = "SAM"
+# mask_source = "Ayda"
 
 image_source = "val"
 # image_source = "val_unblur"
@@ -474,7 +474,7 @@ def main(args):
     cfg.merge_from_file("./faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # set threshold for this model
 
-    cfg.OUTPUT_DIR = "/home/evacheng/val_results/sam_not_blur_on_blur/"
+    cfg.OUTPUT_DIR = "/home/evacheng/new_val_results/sam-sam/"
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
     #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_on_not_blur_model_0399999.pth"
