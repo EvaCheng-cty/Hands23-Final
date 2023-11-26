@@ -474,7 +474,7 @@ def main(args):
     cfg.merge_from_file("./faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
     cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # set threshold for this model
 
-    cfg.OUTPUT_DIR = "/home/evacheng/new_val_results/ayda-ayda/"
+    cfg.OUTPUT_DIR = "/home/evacheng/new_val_results/ayda-sam/"
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 
     cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_on_not_blur_model_0399999.pth"
