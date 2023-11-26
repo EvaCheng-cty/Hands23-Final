@@ -84,7 +84,7 @@ from hodetector.data import register_ho_pascal_voc, hoMapper
 from hodetector.data.ho import load_ho_voc_instances
 from hodetector.modeling import roi_heads
 
-from html_editor import write_html, write_separate_html, write_obj_html
+# from html_editor import write_html, write_separate_html, write_obj_html
 
 
 
