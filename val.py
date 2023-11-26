@@ -91,8 +91,8 @@ from hodetector.modeling import roi_heads
 # validation dataset 
 _datasets_root = "/launch/evacheng/datasets"
 
-mask_source = "SAM"
-# mask_source = "Ayda"
+#mask_source = "SAM"
+mask_source = "Ayda"
 
 image_source = "val"
 # image_source = "val_unblur"
