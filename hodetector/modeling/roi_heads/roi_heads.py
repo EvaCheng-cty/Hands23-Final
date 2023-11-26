@@ -347,7 +347,7 @@ class hoRCNNROIHeads(StandardROIHeads):
 
         for i in range(pred_scores.shape[0]):
             #if (pred_classes_raw[i] == 1 and pred_scores[i] >= 0.5) or pred_classes_raw[i] == 2 or pred_scores[i] >=0.7:
-            if (pred_classes_raw[i] == 1 and pred_scores[i] >= self.cfg.THRESHS.FIRSTOBJ) or (pred_classes_raw[i] == 2 and  pred_scores[i] >= self.cfg.THRESHS.SECONDOBJ) or (pred_classes_raw[i] == 0 and  pred_scores[i] >= self.cfg.THRESHS.HAND):
+            if (pred_classes_raw[i] == 1 and pred_scores[i] >= self.cfg.FIRSTOBJ) or (pred_classes_raw[i] == 2 and  pred_scores[i] >= self.cfg.SECONDOBJ) or (pred_classes_raw[i] == 0 and  pred_scores[i] >= self.cfg.HAND):
 
                 pred_boxes.append([x for x in pred_boxes_raw[i]])
                 pred_classes.append(pred_classes_raw[i].item())
