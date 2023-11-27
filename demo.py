@@ -306,7 +306,7 @@ def main():
 
     # parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/ego4d_on_sam_model_0109999.pth")
     #parser.add_argument("--data_dir", default=f"/w/dandans/datasets/hands2_ego4d_v2/ego4d/")
-    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/sam_blur_1_model_0399999.pth")
+    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_sam_final_0399999.pth")
     parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
     args = parser.parse_args()
     
@@ -316,9 +316,9 @@ def main():
     
     # inputs
     print(f' a folder of images...')
-    #images = glob.glob(f'{args.data_dir}/*')
-    # f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/VAL.txt")
-    # images = f.readlines()
+    images = glob.glob(f'{args.data_dir}/*')
+    f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
+    images = f.readlines()
 
     # random.seed(42)
     # random.shuffle(images)
@@ -328,7 +328,7 @@ def main():
     images = []
 
     # outputs
-    save_dir = "/launch/evacheng/vis_oct/handconfig/"
+    save_dir = "/launch/evacheng/vis_Nov/val/"
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(save_mask_dir, exist_ok=True)
@@ -339,9 +339,9 @@ def main():
     res["images"] = []
     json_path = f"{save_dir}.json"
 
-    for file in glob.glob("/home/evacheng/figures/handconfig/*.png"):
-        images.append(file.replace("/home/evacheng/figures/handconfig/","").replace("png", "jpg"))
-        #images.append(file.replace("/home/evacheng/figures/grasprank/",""))
+    # for file in glob.glob("/home/evacheng/figures/handconfig/*.png"):
+    #     images.append(file.replace("/home/evacheng/figures/handconfig/","").replace("png", "jpg"))
+    #     #images.append(file.replace("/home/evacheng/figures/grasprank/",""))
 
     # loop
     for test_img in tqdm(images):
