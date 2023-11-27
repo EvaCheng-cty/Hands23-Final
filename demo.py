@@ -303,7 +303,7 @@ def main():
     parser.add_argument("--hand_thresh")
     parser.add_argument("--first_obj_thresh")
     parser.add_argument("--second_obj_thresh")
-    parser.add_argument("--model_weights", default=f"./sam_blur_1_model_0399999.pth")
+    parser.add_argument("--model_weights", default=f"./final_sam_final_0399999.pth")
     parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
     args = parser.parse_args()
     
@@ -316,7 +316,7 @@ def main():
     images = glob.glob(f'{args.data_dir}/*')
 
     # outputs
-    save_dir = "/launch/evacheng/final_results_oct/blur_blur/"
+    save_dir = "/launch/evacheng/final_results_Nov/val_set/"
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(save_mask_dir, exist_ok=True)
