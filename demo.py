@@ -303,7 +303,7 @@ def main():
     parser.add_argument("--hand_thresh")
     parser.add_argument("--first_obj_thresh")
     parser.add_argument("--second_obj_thresh")
-    parser.add_argument("--model_weights", default=f"./final_sam_final_0399999.pth")
+    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_sam_final_0399999.pth")
     parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
     args = parser.parse_args()
     
