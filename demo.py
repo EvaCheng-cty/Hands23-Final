@@ -325,7 +325,7 @@ def main():
 
     # images = images[:1000]
 
-    images = []
+    # images = []
 
     # outputs
     save_dir = "/launch/evacheng/vis_Nov/val/"
