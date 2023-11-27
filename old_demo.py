@@ -303,10 +303,7 @@ def main():
     parser.add_argument("--hand_thresh")
     parser.add_argument("--first_obj_thresh")
     parser.add_argument("--second_obj_thresh")
-
-    # parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/ego4d_on_sam_model_0109999.pth")
-    #parser.add_argument("--data_dir", default=f"/w/dandans/datasets/hands2_ego4d_v2/ego4d/")
-    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/sam_blur_1_model_0399999.pth")
+    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_sam_final_0399999.pth")
     parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
     args = parser.parse_args()
     
@@ -316,19 +313,10 @@ def main():
     
     # inputs
     print(f' a folder of images...')
-    #images = glob.glob(f'{args.data_dir}/*')
-    # f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/VAL.txt")
-    # images = f.readlines()
-
-    # random.seed(42)
-    # random.shuffle(images)
-
-    # images = images[:1000]
-
-    images = []
+    images = glob.glob(f'{args.data_dir}/*')
 
     # outputs
-    save_dir = "/launch/evacheng/vis_oct/handconfig/"
+    save_dir = "/launch/evacheng/final_results_Nov/val_set/"
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(save_mask_dir, exist_ok=True)
@@ -337,20 +325,12 @@ def main():
     res = {}
     res["save_dir"] = save_dir
     res["images"] = []
-    json_path = f"{save_dir}.json"
-
-    for file in glob.glob("/home/evacheng/figures/handconfig/*.png"):
-        images.append(file.replace("/home/evacheng/figures/handconfig/","").replace("png", "jpg"))
-        #images.append(file.replace("/home/evacheng/figures/grasprank/",""))
+    json_path = f"{args.data_dir}.json"
 
     # loop
     for test_img in tqdm(images):
-        test_img = test_img.replace("\n", "")
         print(f'Processing: {test_img}')
-        if os.path.exists(os.path.join(args.data_dir, test_img)) is False:
-            print(os.path.join(args.data_dir, test_img))
-            continue
-        im = cv2.imread(os.path.join(args.data_dir, test_img))
+        im = cv2.imread(test_img)
         im_name = os.path.split(test_img)[-1][:-4]
         
         # record img res
@@ -363,16 +343,14 @@ def main():
         for hands in hand_lists:
             hands.save_masks(save_dir, im, test_img.split('/')[-1])
             img['predictions'].append(hands.get_json())
-
-        
-        
+    
         # vis and save
         im = vis_per_image(im, img['predictions'], im_name, save_mask_dir, use_simple=False)
         save_path = os.path.join(save_dir, im_name+'.png')
         im.save(save_path)
 
         res["images"].append(img)
-
+      
 
     f = open(json_path, 'w')
     json.dump(res, f, indent=4)

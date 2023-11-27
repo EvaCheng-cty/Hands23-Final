@@ -2,27 +2,6 @@ import numpy as np
 import pdb, os, cv2
 from PIL import Image, ImageDraw, ImageFont
 
-# 'hand_id', 
-# 'hand_bbox', 
-
-# 'contact_state', 
-# 'hand_side', 
-# 'grasp', 
-
-# 'obj_bbox', 
-# 'obj_touch', 
-
-# 'second_obj_bbox', 
-
-
-
-# 'obj_touch_scores', 
-# 'grasp_scores', 
-
-# 'hand_pred_score', 
-# 'obj_pred_score', 
-# 'sec_obj_pred_score'
-
 
 color_rgb  = [(255,255,0), (255, 128,0), (128,255,0), (0,128,255), (0,0,255), (127,0,255), (255,0,255), (255,0,127), (255,0,0), (255,204,153), (255,102,102), (153,255,153), (153,153,255), (0,0,153)]
 color_rgba = [(255,255,0,70), (255, 128,0,70), (128,255,0,70), (0,128,255,70), (0,0,255,70), (127,0,255,70), (255,0,255,70), (255,0,127,70), (255,0,0,70), (255,204,153,70), (255,102,102,70), (153,255,153,70), (153,153,255,70), (0,0,153,70)]
@@ -101,16 +80,17 @@ def draw_hand_mask(im, draw, bbox, side, contact, grasp, mask, width, height, fo
     contact, _ = parseState(contact)
     grasp, _   = parseGraspType(grasp)
 
-    # h_mask = mask[:, :, 0]
-    # h_mask = Image.fromarray(h_mask, mode='L')
+    h_mask = mask[:, :, 0]
+    h_mask = Image.fromarray(h_mask, mode='L')
 
 
     # bbox, mask
     mask = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
-    # pmask.bitmap((0, 0), h_mask, fill=hand_rgba[side_idx])
+    pmask.bitmap((0, 0), h_mask, fill=hand_rgba[side_idx])
     pmask.rectangle(bbox, outline=hand_rgb[side_idx], width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
+    # pdb.set_trace()
     
     # text
     
@@ -121,7 +101,6 @@ def draw_hand_mask(im, draw, bbox, side, contact, grasp, mask, width, height, fo
             txt1 = f'{contact},{grasp}'
         txt2 = f'{side}'
         txt1_width, txt1_height = draw.textsize(txt1, font)
-
 
         draw = ImageDraw.Draw(im)
         draw.rectangle([bbox[0], max(0, bbox[1]-43), bbox[0]+txt1_width+14, max(0, bbox[1]-41)+41], fill=(255, 255, 255), outline=hand_rgb[side_idx], width=4)
@@ -136,15 +115,15 @@ def draw_firstobj_mask(im, draw, bbox, touch, mask, width, height, font, scale, 
     # parse
     touch, _   = parseTouchType(touch)
 
-    # fo_mask = mask[:, :, 0]
-    # fo_mask = Image.fromarray(fo_mask, mode='L')
+    fo_mask = mask[:, :, 0]
+    fo_mask = Image.fromarray(fo_mask, mode='L')
 
 
     # bbox, mask
     mask  = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
    
-    # pmask.bitmap((0, 0), fo_mask, fill=firstobj_rgba)
+    pmask.bitmap((0, 0), fo_mask, fill=firstobj_rgba)
     pmask.rectangle(bbox, outline=firstobj_rgb, width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
     
@@ -162,13 +141,13 @@ def draw_firstobj_mask(im, draw, bbox, touch, mask, width, height, font, scale, 
 
 def draw_secondobj_mask(im, draw, bbox, mask, width, height, font, scale, use_simple):
 
-    # so_mask = mask[:, :, 0]
-    # so_mask = Image.fromarray(so_mask, mode='L')
+    so_mask = mask[:, :, 0]
+    so_mask = Image.fromarray(so_mask, mode='L')
 
     # bbox, mask
     mask = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
-    # pmask.bitmap((0, 0), so_mask, fill=secondobj_rgba)
+    pmask.bitmap((0, 0), so_mask, fill=secondobj_rgba)
     pmask.rectangle(bbox, outline=secondobj_rgb, width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
     
@@ -206,7 +185,7 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
     draw = ImageDraw.Draw(im)
     
     width, height = im.size 
-    scale = width // 500
+    scale = max(width // 500, 1)
     font = ImageFont.truetype(font_path, size=35)
 
     for idx, p in enumerate(preds):
@@ -220,15 +199,20 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
         fo_bbox   = p['obj_bbox']
         so_bbox   = p['second_obj_bbox']
 
-
+        # h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}.jpg')
+        # fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}.jpg')
+        # so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}.jpg')
+        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}.png')
+        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}.png')
+        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}.png')
         # h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}')
         # fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}')
         # so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}')
         
-        # if os.path.exists(h_mask_path):
-        #     h_mask = cv2.imread(h_mask_path)
-        # else:
-        #     print(f'mask not exist: {h_mask_path}')
+        if os.path.exists(h_mask_path):
+            h_mask = cv2.imread(h_mask_path)
+        else:
+            print(f'mask not exist: {h_mask_path}')
         
         
 
@@ -241,38 +225,39 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
             if fo_bbox is not None:
                 fo_bbox   = [ float(x) for x in fo_bbox]
                 fo_touch  = p['obj_touch']
-                # if os.path.exists(fo_mask_path):
-                #     fo_mask = cv2.imread(fo_mask_path)
-                # else:
-                #     print(f'mask not exist: {fo_mask_path}')
+                if os.path.exists(fo_mask_path):
+                    fo_mask = cv2.imread(fo_mask_path)
+                else:
+                    print(f'mask not exist: {fo_mask_path}')
                 #
                 fo_center = calculate_center(fo_bbox)
 
                 # draw second obj
                 if so_bbox is not None:
                     so_bbox   = [ float(x) for x in so_bbox ]
-                    # if os.path.exists(so_mask_path):
-                    #     so_mask = cv2.imread(so_mask_path)
-                    # else:
-                    #     print(f'mask not exist: {so_mask_path}')
+                    if os.path.exists(so_mask_path):
+                        so_mask = cv2.imread(so_mask_path)
+                    else:
+                        print(f'mask not exist: {so_mask_path}')
                     #
                     so_center = calculate_center(so_bbox)
                     
 
         # plot in order
         if so_bbox is not None:
-            im = draw_secondobj_mask(im, draw, so_bbox, None, width, height, font, scale, use_simple)
+            im = draw_secondobj_mask(im, draw, so_bbox, so_mask, width, height, font, scale, use_simple)
             
         if fo_bbox is not None:
-            im = draw_firstobj_mask(im, draw, fo_bbox, fo_touch, None, width, height, font, scale, use_simple)
+            im = draw_firstobj_mask(im, draw, fo_bbox, fo_touch, fo_mask, width, height, font, scale, use_simple)
             if so_bbox is not None:
                 draw_line_point(draw, fo_center, so_center, firstobj_rgb, secondobj_rgb, scale)
 
         if h_bbox is not None:
-            im = draw_hand_mask(im, draw, h_bbox, h_side, h_contact, h_grasp, None, width, height, font, scale, use_simple)
+            im = draw_hand_mask(im, draw, h_bbox, h_side, h_contact, h_grasp, h_mask, width, height, font, scale, use_simple)
             if fo_bbox is not None:
                 draw_line_point(draw, h_center, fo_center, hand_rgb[side_idx], firstobj_rgb, scale)
 
 
     return im
+
 
