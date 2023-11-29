@@ -367,7 +367,7 @@ def main():
         
         
         # vis and save
-        im = vis_per_image(im, img['predictions'], im_name, save_mask_dir, use_simple=False)
+        im = vis_per_image(im, img['predictions'], im_name+'.png', save_mask_dir, use_simple=False)
         save_path = os.path.join(save_dir, im_name+'.png')
         im.save(save_path)
 
