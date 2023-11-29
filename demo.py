@@ -323,7 +323,7 @@ def main():
     # random.seed(42)
     # random.shuffle(images)
 
-    # images = images[:1000]
+    images = images[:100]
 
     # images = []
 
@@ -339,9 +339,7 @@ def main():
     res["images"] = []
     json_path = f"{save_dir}.json"
 
-    # for file in glob.glob("/home/evacheng/figures/handconfig/*.png"):
-    #     images.append(file.replace("/home/evacheng/figures/handconfig/","").replace("png", "jpg"))
-    #     #images.append(file.replace("/home/evacheng/figures/grasprank/",""))
+  
 
     # loop
     for test_img in tqdm(images):

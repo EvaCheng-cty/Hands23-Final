@@ -261,15 +261,15 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
 
         # plot in order
         if so_bbox is not None:
-            im = draw_secondobj_mask(im, draw, so_bbox, None, width, height, font, scale, use_simple)
+            im = draw_secondobj_mask(im, draw, so_bbox, so_mask, width, height, font, scale, use_simple)
             
         if fo_bbox is not None:
-            im = draw_firstobj_mask(im, draw, fo_bbox, fo_touch, None, width, height, font, scale, use_simple)
+            im = draw_firstobj_mask(im, draw, fo_bbox, fo_touch, fo_mask, width, height, font, scale, use_simple)
             if so_bbox is not None:
                 draw_line_point(draw, fo_center, so_center, firstobj_rgb, secondobj_rgb, scale)
 
         if h_bbox is not None:
-            im = draw_hand_mask(im, draw, h_bbox, h_side, h_contact, h_grasp, None, width, height, font, scale, use_simple)
+            im = draw_hand_mask(im, draw, h_bbox, h_side, h_contact, h_grasp, h_mask, width, height, font, scale, use_simple)
             if fo_bbox is not None:
                 draw_line_point(draw, h_center, fo_center, hand_rgb[side_idx], firstobj_rgb, scale)
 
