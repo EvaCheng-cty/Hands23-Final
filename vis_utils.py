@@ -136,15 +136,15 @@ def draw_firstobj_mask(im, draw, bbox, touch, mask, width, height, font, scale, 
     # parse
     touch, _   = parseTouchType(touch)
 
-    # fo_mask = mask[:, :, 0]
-    # fo_mask = Image.fromarray(fo_mask, mode='L')
+    fo_mask = mask[:, :, 0]
+    fo_mask = Image.fromarray(fo_mask, mode='L')
 
 
     # bbox, mask
     mask  = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
    
-    # pmask.bitmap((0, 0), fo_mask, fill=firstobj_rgba)
+    pmask.bitmap((0, 0), fo_mask, fill=firstobj_rgba)
     pmask.rectangle(bbox, outline=firstobj_rgb, width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
     
@@ -162,8 +162,8 @@ def draw_firstobj_mask(im, draw, bbox, touch, mask, width, height, font, scale, 
 
 def draw_secondobj_mask(im, draw, bbox, mask, width, height, font, scale, use_simple):
 
-    # so_mask = mask[:, :, 0]
-    # so_mask = Image.fromarray(so_mask, mode='L')
+    so_mask = mask[:, :, 0]
+    so_mask = Image.fromarray(so_mask, mode='L')
 
     # bbox, mask
     mask = Image.new('RGBA', (width, height))
@@ -174,7 +174,7 @@ def draw_secondobj_mask(im, draw, bbox, mask, width, height, font, scale, use_si
     
     # text
     draw = ImageDraw.Draw(im)
-    # draw.rectangle([bbox[0], max(0, bbox[1]-30), bbox[0]+62, max(0, bbox[1]-30)+30], fill=(255, 255, 255), outline=secondobj_rgb, width=4)
+    draw.rectangle([bbox[0], max(0, bbox[1]-30), bbox[0]+62, max(0, bbox[1]-30)+30], fill=(255, 255, 255), outline=secondobj_rgb, width=4)
 
     return im
 
@@ -221,14 +221,14 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
         so_bbox   = p['second_obj_bbox']
 
 
-        # h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}')
-        # fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}')
-        # so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}')
+        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}')
+        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}')
+        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}')
         
-        # if os.path.exists(h_mask_path):
-        #     h_mask = cv2.imread(h_mask_path)
-        # else:
-        #     print(f'mask not exist: {h_mask_path}')
+        if os.path.exists(h_mask_path):
+            h_mask = cv2.imread(h_mask_path)
+        else:
+            print(f'mask not exist: {h_mask_path}')
         
         
 
@@ -241,21 +241,21 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
             if fo_bbox is not None:
                 fo_bbox   = [ float(x) for x in fo_bbox]
                 fo_touch  = p['obj_touch']
-                # if os.path.exists(fo_mask_path):
-                #     fo_mask = cv2.imread(fo_mask_path)
-                # else:
-                #     print(f'mask not exist: {fo_mask_path}')
-                #
+                if os.path.exists(fo_mask_path):
+                    fo_mask = cv2.imread(fo_mask_path)
+                else:
+                    print(f'mask not exist: {fo_mask_path}')
+                
                 fo_center = calculate_center(fo_bbox)
 
                 # draw second obj
                 if so_bbox is not None:
                     so_bbox   = [ float(x) for x in so_bbox ]
-                    # if os.path.exists(so_mask_path):
-                    #     so_mask = cv2.imread(so_mask_path)
-                    # else:
-                    #     print(f'mask not exist: {so_mask_path}')
-                    #
+                    if os.path.exists(so_mask_path):
+                        so_mask = cv2.imread(so_mask_path)
+                    else:
+                        print(f'mask not exist: {so_mask_path}')
+                    
                     so_center = calculate_center(so_bbox)
                     
 

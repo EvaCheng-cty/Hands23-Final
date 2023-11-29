@@ -234,7 +234,7 @@ def deal_output(im, predictor):
     touch_type = torch.tensor(pred_dz[:, 7])
     contact_state = torch.tensor(pred_dz[:,8])
 
-    scores = torch.tensor(pred_dz[:,9])
+    # scores = torch.tensor(pred_dz[:,9])
     grasp_scores = torch.tensor(pred_dz[:,10:18])
     touch_scores = torch.tensor(pred_dz[:,18:25])
 
