@@ -379,6 +379,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         try:
             Ids = F.one_hot(pred_classes, num_classes = 3)
         except:
+            print(pred_classes)
             temp = torch.zeros(0,1).cuda()
             return [torch.cat((boxes,temp, temp,temp, temp, temp), dim=1)], [Instances(image_size = image_size, pred_boxes = pred_boxes_, pred_classes = pred_classes_, scores = pred_scores_)]
         
