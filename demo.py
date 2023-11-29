@@ -323,7 +323,7 @@ def main():
     # random.seed(42)
     # random.shuffle(images)
 
-    images = images[:100]
+    #images = images[:100]
 
     # images = []
 
