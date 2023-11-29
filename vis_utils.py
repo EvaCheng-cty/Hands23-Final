@@ -101,14 +101,14 @@ def draw_hand_mask(im, draw, bbox, side, contact, grasp, mask, width, height, fo
     contact, _ = parseState(contact)
     grasp, _   = parseGraspType(grasp)
 
-    # h_mask = mask[:, :, 0]
-    # h_mask = Image.fromarray(h_mask, mode='L')
+    h_mask = mask[:, :, 0]
+    h_mask = Image.fromarray(h_mask, mode='L')
 
 
     # bbox, mask
     mask = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
-    # pmask.bitmap((0, 0), h_mask, fill=hand_rgba[side_idx])
+    pmask.bitmap((0, 0), h_mask, fill=hand_rgba[side_idx])
     pmask.rectangle(bbox, outline=hand_rgb[side_idx], width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
     
@@ -168,7 +168,7 @@ def draw_secondobj_mask(im, draw, bbox, mask, width, height, font, scale, use_si
     # bbox, mask
     mask = Image.new('RGBA', (width, height))
     pmask = ImageDraw.Draw(mask)
-    # pmask.bitmap((0, 0), so_mask, fill=secondobj_rgba)
+    pmask.bitmap((0, 0), so_mask, fill=secondobj_rgba)
     pmask.rectangle(bbox, outline=secondobj_rgb, width=4*scale, fill=None)
     im.paste(mask, (0,0), mask)
     
