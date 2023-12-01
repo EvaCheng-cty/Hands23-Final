@@ -222,9 +222,9 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
         so_bbox   = p['second_obj_bbox']
 
 
-        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}.png')
-        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}.png')
-        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}.png')
+        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}')
+        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}')
+        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}')
         
         if os.path.exists(h_mask_path):
             h_mask = cv2.imread(h_mask_path)
