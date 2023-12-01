@@ -320,14 +320,14 @@ def main():
     f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
     images = f.readlines()
 
-    random.seed(42)
-    random.shuffle(images)
+    # random.seed(42)
+    # random.shuffle(images)
 
-    images = []
-    images.append( "AR_5PIGFuqoJnY_3_1800_55.jpg")
+    # images = []
+    # images.append( "AR_5PIGFuqoJnY_3_1800_55.jpg")
 
     # outputs
-    save_dir = "/launch/evacheng/vis_Nov/val_test/"
+    save_dir = "/launch/evacheng/vis_Nov/val/"
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(save_mask_dir, exist_ok=True)
