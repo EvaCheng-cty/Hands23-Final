@@ -306,7 +306,8 @@ def main():
 
     # parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/ego4d_on_sam_model_0109999.pth")
     #parser.add_argument("--data_dir", default=f"/w/dandans/datasets/hands2_ego4d_v2/ego4d/")
-    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_sam_final_0399999.pth")
+    #parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_sam_final_0399999.pth")
+    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/final_on_blur_model_0399999.pth")
     parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
     args = parser.parse_args()
     
