@@ -324,6 +324,7 @@ def main():
     random.shuffle(images)
 
     images = images[:100]
+    images[0] = "AR_5PIGFuqoJnY_3_1800_55.png"
 
     # outputs
     save_dir = "/launch/evacheng/vis_Nov/val_test/"
