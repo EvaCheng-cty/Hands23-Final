@@ -323,8 +323,8 @@ def main():
     random.seed(42)
     random.shuffle(images)
 
-    images = images[:100]
-    images[0] = "AR_5PIGFuqoJnY_3_1800_55.png"
+    images = []
+    images.append( "AR_5PIGFuqoJnY_3_1800_55.jpg")
 
     # outputs
     save_dir = "/launch/evacheng/vis_Nov/val_test/"
