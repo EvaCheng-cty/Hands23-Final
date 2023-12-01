@@ -156,7 +156,6 @@ def draw_firstobj_mask(im, draw, bbox, touch, mask, width, height, font, scale, 
         txt_width, txt_height = draw.textsize(txt, font)
         draw.rectangle([bbox[0], max(0, bbox[1]-43), bbox[0]+txt_width+14, max(0, bbox[1]-43)+43], fill=(255, 255, 255), outline=firstobj_rgb, width=4)
         draw.text((bbox[0]+8, max(0, bbox[1]-41)), txt, font=font, fill=txt_color) # 
-        # print(txt_width, txt_height)
     return im
 
 
@@ -206,7 +205,9 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
     draw = ImageDraw.Draw(im)
     
     width, height = im.size 
-    scale = width // 500
+    # scale = width // 500
+    #TC Dec: changed to see if it fix the vis problem
+    scale = max(width // 500, 1)
     font = ImageFont.truetype(font_path, size=35)
 
     for idx, p in enumerate(preds):
@@ -221,9 +222,9 @@ def vis_per_image(im, preds, filename, masks_dir, font_path='./times_b.ttf', use
         so_bbox   = p['second_obj_bbox']
 
 
-        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}')
-        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}')
-        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}')
+        h_mask_path     = os.path.join(masks_dir, f'2_{idx}_{filename}.png')
+        fo_mask_path    = os.path.join(masks_dir, f'3_{idx}_{filename}.png')
+        so_mask_path    = os.path.join(masks_dir, f'5_{idx}_{filename}.png')
         
         if os.path.exists(h_mask_path):
             h_mask = cv2.imread(h_mask_path)
