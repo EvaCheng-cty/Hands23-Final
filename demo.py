@@ -328,7 +328,7 @@ def main():
     # images.append( "AR_5PIGFuqoJnY_3_1800_55.jpg")
 
     # outputs
-    save_dir = "/launch/evacheng/vis_Nov/val/"
+    save_dir = "/launch/evacheng/vis_Nov/val_ayda/"
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_dir, exist_ok=True)
     os.makedirs(save_mask_dir, exist_ok=True)
