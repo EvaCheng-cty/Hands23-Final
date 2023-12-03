@@ -46,12 +46,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pdb
 
-_datasets_root = "/home/evacheng/allMerged7Blur/"
+# _datasets_root = "/home/evacheng/allMerged7Blur/"
+
+
+
+_datasets_root = "/home/evacheng/datasets/SAM/"
 
 #split changed based on dataset //Feb 5 2023
-for d in ["TRAIN", "VAL"]:
-    register_ho_pascal_voc(name=f'100DOH_hand_{d}', dirname=_datasets_root, split=d, year=2007, class_names=["hand", "targetobject", "secondobject"])
-    MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='pascal_voc')
+for d in ["TRAIN"]:
+    register_ho_pascal_voc(name=f'100DOH_hand_{d}',dirname=_datasets_root, year = 2007, split=d, json_file=os.path.join(_datasets_root, "annotations", d.lower()+".json"), class_names=["hand", "firstobject", "secondobject"])
+    MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='coco')
+
+
+# #split changed based on dataset //Feb 5 2023
+# for d in ["TRAIN", "VAL"]:
+#     register_ho_pascal_voc(name=f'100DOH_hand_{d}', dirname=_datasets_root, split=d, year=2007, class_names=["hand", "targetobject", "secondobject"])
+#     MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='pascal_voc')
 
 class Trainer(DefaultTrainer):
     """
