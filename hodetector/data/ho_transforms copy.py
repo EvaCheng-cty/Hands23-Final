@@ -65,14 +65,14 @@ def annotations_to_instances(annos, image_size, mask_format="polygon", file_name
     secondObjectId = [torch.tensor(obj["secondObjectId"]) for obj in annos]
     target.gt_secondObjectId = torch.stack(secondObjectId, dim=0)
 
-    hand_side = [torch.tensor(obj["handside"]) for obj in annos]
+    hand_side = [torch.tensor(obj["handSide"]) for obj in annos]
     target.gt_handSide = torch.stack(hand_side, dim=0)
-    contact_state = [torch.tensor(obj["isincontact"]) for obj in annos]
+    contact_state = [torch.tensor(obj["contactState"]) for obj in annos]
     target.gt_contactState = torch.stack(contact_state, dim=0)
-    touch = [torch.tensor(obj["tooltype"]) for obj in annos]
+    touch = [torch.tensor(obj["touch"]) for obj in annos]
     target.gt_touch = torch.stack(touch, dim=0)
 
-    grasp = [torch.tensor(obj["grasptype"]) for obj in annos]
+    grasp = [torch.tensor(obj["grasp"]) for obj in annos]
     target.gt_grasp = torch.stack(grasp, dim=0)
 
     # file_names = [""]*len(grasp)
@@ -84,9 +84,9 @@ def annotations_to_instances(annos, image_size, mask_format="polygon", file_name
     try:
         assert target.gt_interaction != None
     except:
+        pdb.set_trace()
 
         print("error!")
-        
     
     # print(target)
     # time.sleep(100)
