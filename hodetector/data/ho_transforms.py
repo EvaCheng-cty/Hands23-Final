@@ -75,64 +75,13 @@ def annotations_to_instances(annos, image_size, mask_format="polygon", file_name
     grasp = [torch.tensor(obj["grasptype"]) for obj in annos]
     target.gt_grasp = torch.stack(grasp, dim=0)
 
-    # file_names = [""]*len(grasp)
+    assert target.gt_interaction != None
 
-    # file_names[0] = file_name
+    # try:
+    #     assert target.gt_interaction != None
+    # except:
 
-    # target.gt_file_name = torch.stack(file_names, dim=0)
-
-    try:
-        assert target.gt_interaction != None
-    except:
-
-        print("error!")
-        
-    
-    # print(target)
-    # time.sleep(100)
-  
-
-    # if len(annos) and "segmentation" in annos[0]:
-    #     segms = [obj["segmentation"] for obj in annos]
-    #     if mask_format == "polygon":
-    #         try:
-    #             masks = PolygonMasks(segms)
-    #         except ValueError as e:
-    #             raise ValueError(
-    #                 "Failed to use mask_format=='polygon' from the given annotations!"
-    #             ) from e
-    #     else:
-    #         assert mask_format == "bitmask", mask_format
-    #         masks = []
-    #         for segm in segms:
-    #             if isinstance(segm, list):
-    #                 # polygon
-    #                 masks.append(polygons_to_bitmask(segm, *image_size))
-    #             elif isinstance(segm, dict):
-    #                 # COCO RLE
-    #                 masks.append(mask_util.decode(segm))
-    #             elif isinstance(segm, np.ndarray):
-    #                 assert segm.ndim == 2, "Expect segmentation of 2 dimensions, got {}.".format(
-    #                     segm.ndim
-    #                 )
-    #                 # mask array
-    #                 masks.append(segm)
-    #             else:
-    #                 raise ValueError(
-    #                     "Cannot convert segmentation of type '{}' to BitMasks!"
-    #                     "Supported types are: polygons as list[list[float] or ndarray],"
-    #                     " COCO-style RLE as a dict, or a binary segmentation mask "
-    #                     " in a 2D numpy array of shape HxW.".format(type(segm))
-    #                 )
-    #         # torch.from_numpy does not support array with negative stride.
-    #         masks = BitMasks(
-    #             torch.stack([torch.from_numpy(np.ascontiguousarray(x)) for x in masks])
-    #         )
-    #     target.gt_masks = masks
-
-    # if len(annos) and "keypoints" in annos[0]:
-    #     kpts = [obj.get("keypoints", []) for obj in annos]
-    #     target.gt_keypoints = Keypoints(kpts)
+    #     print("error!")
 
     return target
 
@@ -317,50 +266,8 @@ class hoMapper:
 
             dataset_dict["instances"] = (utils.filter_empty_instances(instances, by_mask = False))
             file_name = dataset_dict["file_name"]
-            #     dataset_dict["instances"] = (utils.filter_empty_instances(instances, by_mask = False))
+    
             dataset_dict["instances"] .__setattr__('_file_name', file_name)
 
-            # try:
-            #     file_name = dataset_dict["file_name"]
-            #     dataset_dict["instances"] = (utils.filter_empty_instances(instances, by_mask = False))
-            #     dataset_dict["instances"] .__setattr__('_file_name', file_name)
-            # except:
-            #     pdb.set_trace()
-            #     print("error")
-            #dataset_dict["instances"] = instances
-
-            # if dataset_dict["instances"][0].__len__()  == 0:
-            #     pdb.set_trace()
-            # dataset_dict["instances"] = instances
-
-            # print(dataset_dict)
-
-            # pdb.set_trace()
-            # try:
-            #     assert dataset_dict["instances"][0].__len__() >0
-            # except:
-            #     print("error!")
-            #     print("instances")
-            #     print(instances)
-            #     print("read_in_dict")
-            #     print( dataset_dict["instances"])
-            #     time.sleep(2000)
-
-            # try:
-            #     print(dataset_dict["instances"][0])
-
-            # try:
-            #     print(dataset_dict["instances"].get("gt_interaction"))
-            # except:
-            #     pdb.set_trace()
-            #     print("error! in ho_transform")
-            
-            # pdb.set_trace()
-
-            # print("*********************************")
-            # print(dataset_dict["instances"])
-            # print("*********************************")
-
-        # pdb.set_trace()
         return dataset_dict
 

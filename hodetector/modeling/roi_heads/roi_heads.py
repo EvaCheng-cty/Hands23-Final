@@ -446,7 +446,7 @@ class hoRCNNROIHeads(StandardROIHeads):
                     max_val  = torch.max(cls_prob_i)
                     idx = torch.argmax(cls_prob_i)
                     interaction[i] = -1 if max_val.item() <0.7 else idx.item()
-                    # pdb.set_trace()
+    
                     contact_state[i] = 0 if interaction[i] == -1 else torch.argmax(inter_prob[i][int(idx.item())][1:]).item()+1
                     score[i] = max_val
                     
@@ -540,7 +540,7 @@ class hoRCNNROIHeads(StandardROIHeads):
                 for j in range(length):
                     if (handId[iou[i]] >= 0 and objectId[iou[j]] >=0) :
                         PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == objectId[iou[j]] else 0
-                    elif (objectId[iou[i]] >=0 and secondObjectId[iou[j]] >= 0):
+                    elif (objectId[iou[i]] >=0 and gt_touch[iou[i]] == 2 and secondObjectId[iou[j]] >= 0):
                         PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == secondObjectId[iou[j]] else 0
                        
         
@@ -563,7 +563,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         assert pred_t.shape[0] == gt_touch[iou].shape[0]
         losses_touch = self.t_head.losses(pred_t, gt_touch[iou])
 
-        assert pred_g.shape[0] == gt_touch[iou].shape[0] #uncomment when start training grasp
+        assert pred_g.shape[0] == gt_touch[iou].shape[0] 
         losses_grasp = self.g_head.losses(pred_g, gt_grasp[iou])
            
       
