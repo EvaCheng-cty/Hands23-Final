@@ -337,7 +337,8 @@ def main():
     res = {}
     res["save_dir"] = save_dir
     res["images"] = []
-    json_path = f"{save_dir}.json"
+    # json_path = f"{save_dir}.json"
+    json_path = os.path.join(save_dir, "result.json")
 
   
 
