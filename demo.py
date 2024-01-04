@@ -359,15 +359,15 @@ def main():
         #save masks and vis
         hand_lists = deal_output(im = im, predictor= predictor)
         for hands in hand_lists:
-            hands.save_masks(save_dir, im, test_img.split('/')[-1])
+            # hands.save_masks(save_dir, im, test_img.split('/')[-1])
             img['predictions'].append(hands.get_json())
 
         
         
         # vis and save
-        im = vis_per_image(im, img['predictions'], im_name+'.png', save_mask_dir, use_simple=False)
-        save_path = os.path.join(save_dir, im_name+'.png')
-        im.save(save_path)
+        # im = vis_per_image(im, img['predictions'], im_name+'.png', save_mask_dir, use_simple=False)
+        # save_path = os.path.join(save_dir, im_name+'.png')
+        # im.save(save_path)
 
         res["images"].append(img)
 
