@@ -287,7 +287,7 @@ def set_cfg(args):
     cfg.SECONDOBJ = float(second_obj_thresh)
 
     cfg.HAND_RELA = 0.3
-    cfg.OBJ_RELA = 0.3
+    cfg.OBJ_RELA = 0.7
 
     cfg.freeze()
 
