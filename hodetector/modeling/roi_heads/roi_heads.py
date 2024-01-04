@@ -200,33 +200,6 @@ class hoRCNNROIHeads(StandardROIHeads):
             else:
                 losses.update(losses_g)
 
-            # pdb.set_trace()
-            # proposals is modified in-place below, so losses must be computed first.
-            # if self.train_on_pred_boxes:
-            #     with torch.no_grad():
-            #         pred_boxes = self.box_predictor.predict_boxes_for_gt_classes(
-            #             predictions, proposals
-            #         )
-            #         for proposals_per_image, pred_boxes_per_image in zip(proposals, pred_boxes):
-            #             proposals_per_image.proposal_boxes = Boxes(pred_boxes_per_image)
-            # # debug
-            # for value in losses.values():
-            #     if torch.isnan(value):
-            #         print("bug!!!!")
-
-            # copied from detectron2 roi_heads.py // Feb 21 2023
-            # if self.mask_on:
-            #     proposals, fg_selection_masks = select_foreground_proposals(
-            #         proposals, self.num_classes
-            #     )
-            #     # Since the ROI feature transform is shared between boxes and masks,
-            #     # we don't need to recompute features. The mask loss is only defined
-            #     # on foreground proposals, so we need to select out the foreground
-            #     # features.
-            #     mask_features = box_features[torch.cat(fg_selection_masks, dim=0)]
-            #     del box_features
-            #     losses.update(self.mask_head(mask_features, proposals))
-
            
             for val in losses.values():
              
@@ -237,6 +210,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         else:
             
             pred_instances, _ = self.box_predictor.inference(predictions, proposals)
+            pdb.set_trace()
             z_instances, pred_instances = self._inference_z(features, pred_instances)
             #new code for adding mask /// Jan 2023
             # pred_instances = self._forward_mask(features_org, pred_instances)
