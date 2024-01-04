@@ -322,10 +322,10 @@ def main():
     f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
     images = f.readlines()
 
-    random.seed(42)
-    random.shuffle(images)
+    # random.seed(42)
+    # random.shuffle(images)
 
-    images = images[:100]
+    # images = images[:100]
 
     # outputs
     save_dir = args.save_dir
@@ -371,7 +371,7 @@ def main():
 
         res["images"].append(img)
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     f = open(json_path, 'w')
     json.dump(res, f, indent=4)
