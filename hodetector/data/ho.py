@@ -144,21 +144,7 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
     #  'date_captured': '2013-11-17 05:57:24',
     #  'id': 1268}
     imgs = coco_api.loadImgs(img_ids)
-    # anns is a list[list[dict]], where each dict is an annotation
-    # record for an object. The inner list enumerates the objects in an image
-    # and the outer list enumerates over images. Example of anns[0]:
-    # [{'segmentation': [[192.81,
-    #     247.09,
-    #     ...
-    #     219.03,
-    #     249.06]],
-    #   'area': 1035.749,
-    #   'iscrowd': 0,
-    #   'image_id': 1268,
-    #   'bbox': [192.81, 224.8, 74.73, 33.43],
-    #   'category_id': 16,
-    #   'id': 42986},
-    #  ...]
+  
     anns = [coco_api.imgToAnns[img_id] for img_id in img_ids]
     total_num_valid_anns = sum([len(x) for x in anns])
     total_num_anns = len(coco_api.anns)
