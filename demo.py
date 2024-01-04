@@ -240,7 +240,7 @@ def deal_output(im, predictor):
 
     hand_list = []
     count = 0
-
+    
     for i in range(len(pred_classes)):
         if pred_classes[i] == 0:
             curr_hand = Hands(hand_id= count, hand_bbox=pred_boxes[i], hand_mask=pred_masks[i], contactState=int(contact_state[i].item()),hand_side=hand_side[i].item(), grasp = grasp[i].item(), pred_score= pred_scores[i], grasp_scores= grasp_scores[i])

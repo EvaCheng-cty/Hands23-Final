@@ -328,13 +328,6 @@ class hoRCNNROIHeads(StandardROIHeads):
     def _inference_z(self, features, pred_instances):
 
         image_size = pred_instances[0].image_size
-
-        # try:
-        #     assert pred_instances[0].__len__() >0
-        # except:
-        #     pdb.set_trace()
-        #     return "None", "None"
-            
     
     
         pred_boxes_raw =  [x.pred_boxes for x in pred_instances][0].tensor
@@ -344,6 +337,8 @@ class hoRCNNROIHeads(StandardROIHeads):
         pred_boxes = []
         pred_classes = []
         pred_score = []
+
+        pdb.set_trace()
 
         for i in range(pred_scores.shape[0]):
             #if (pred_classes_raw[i] == 1 and pred_scores[i] >= 0.5) or pred_classes_raw[i] == 2 or pred_scores[i] >=0.7:
