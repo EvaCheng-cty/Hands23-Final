@@ -286,7 +286,7 @@ def set_cfg(args):
     second_obj_thresh = args.second_obj_thresh if args.second_obj_thresh is not None else thresh
     cfg.SECONDOBJ = float(second_obj_thresh)
 
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0
+    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0
 
     cfg.HAND_RELA = 0.3
     cfg.OBJ_RELA = 0.7
@@ -324,10 +324,10 @@ def main():
     f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
     images = f.readlines()
 
-    # random.seed(42)
-    # random.shuffle(images)
+    random.seed(42)
+    random.shuffle(images)
 
-    # images = images[:100]
+    images = images[:1000]
 
     # outputs
     save_dir = args.save_dir
