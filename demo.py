@@ -324,10 +324,14 @@ def main():
     f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
     images = f.readlines()
 
-    random.seed(42)
-    random.shuffle(images)
+    # random.seed(42)
+    # random.shuffle(images)
 
-    images = images[:1000]
+    # images = images[:1000]
+
+    images = ["ND_x7jpPPHvPxE_frame012001.jpg", "ND_pp8HbHD_w5Q_frame011701.jpg", "ND_r4Xdg7B2_pM_frame020034.jpg", "ND_O5MsVRbjsYc_frame000001", "ND_r_5wbjSD83Y_frame007649"
+              ,"CC_000000005632", "EK_0045_P30_111_frame_0000065109", "EK_0035_P27_101_frame_0000018055", "CC_000000174657", "ND_461kcTqif", "ND_u9MjbLzft0E_frame003501",
+              "ND_QOS5Ta8VobU_frame008971", "ND_bIUhdpQ9big_frame010001"]
 
     # outputs
     save_dir = args.save_dir
