@@ -338,7 +338,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         pred_classes = []
         pred_score = []
 
-        pdb.set_trace()
+        # pdb.set_trace()
 
         for i in range(pred_scores.shape[0]):
             #if (pred_classes_raw[i] == 1 and pred_scores[i] >= 0.5) or pred_classes_raw[i] == 2 or pred_scores[i] >=0.7:
