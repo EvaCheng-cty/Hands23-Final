@@ -210,7 +210,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         else:
             
             pred_instances, _ = self.box_predictor.inference(predictions, proposals)
-            pdb.set_trace()
+
             z_instances, pred_instances = self._inference_z(features, pred_instances)
             #new code for adding mask /// Jan 2023
             # pred_instances = self._forward_mask(features_org, pred_instances)
