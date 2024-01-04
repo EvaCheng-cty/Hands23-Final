@@ -286,6 +286,8 @@ def set_cfg(args):
     second_obj_thresh = args.second_obj_thresh if args.second_obj_thresh is not None else thresh
     cfg.SECONDOBJ = float(second_obj_thresh)
 
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0
+
     cfg.HAND_RELA = 0.3
     cfg.OBJ_RELA = 0.7
 
