@@ -371,6 +371,7 @@ def main():
 
         res["images"].append(img)
 
+    pdb.set_trace()
 
     f = open(json_path, 'w')
     json.dump(res, f, indent=4)
