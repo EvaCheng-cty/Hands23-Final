@@ -25,6 +25,7 @@ import pdb
 import math
 from math import nan
 import time
+import pdb
 
 from datetime import datetime
 
@@ -302,6 +303,9 @@ class hoRCNNROIHeads(StandardROIHeads):
     def _inference_z(self, features, pred_instances):
 
         image_size = pred_instances[0].image_size
+
+      
+            
     
     
         pred_boxes_raw =  [x.pred_boxes for x in pred_instances][0].tensor
@@ -312,11 +316,8 @@ class hoRCNNROIHeads(StandardROIHeads):
         pred_classes = []
         pred_score = []
 
-        # pdb.set_trace()
-
         for i in range(pred_scores.shape[0]):
-            #if (pred_classes_raw[i] == 1 and pred_scores[i] >= 0.5) or pred_classes_raw[i] == 2 or pred_scores[i] >=0.7:
-            if (pred_classes_raw[i] == 1 and pred_scores[i] >= self.cfg.FIRSTOBJ) or (pred_classes_raw[i] == 2 and  pred_scores[i] >= self.cfg.SECONDOBJ) or (pred_classes_raw[i] == 0 and  pred_scores[i] >= self.cfg.HAND):
+            if (pred_classes_raw[i] == 1 and pred_scores[i] >= float(self.cfg.FIRSTOBJ)) or (pred_classes_raw[i] == 2 and  pred_scores[i] >= float(self.cfg.SECONDOBJ) ) or (pred_classes_raw[i] == 0 and  pred_scores[i] >= float(self.cfg.HAND)):
 
                 pred_boxes.append([x for x in pred_boxes_raw[i]])
                 pred_classes.append(pred_classes_raw[i].item())
@@ -348,9 +349,10 @@ class hoRCNNROIHeads(StandardROIHeads):
         try:
             Ids = F.one_hot(pred_classes, num_classes = 3)
         except:
-            print(pred_classes)
             temp = torch.zeros(0,1).cuda()
-            return [torch.cat((boxes,temp, temp,temp, temp, temp), dim=1)], [Instances(image_size = image_size, pred_boxes = pred_boxes_, pred_classes = pred_classes_, scores = pred_scores_)]
+            temp_g = torch.zeros(0,8).cuda()
+            temp_t = torch.zeros(0,7).cuda()
+            return [torch.cat((boxes,temp, temp,temp, temp, temp, temp_g, temp_t), dim=1)], [Instances(image_size = image_size, pred_boxes = pred_boxes_, pred_classes = pred_classes_, scores = pred_scores_)]
         
         handId = Ids[:,0]-1
         objectId = Ids[:,1]-1
@@ -402,7 +404,10 @@ class hoRCNNROIHeads(StandardROIHeads):
         h_side = torch.zeros(hand_side.shape[0],1).cuda()
         t_type = 100*torch.ones(hand_side.shape[0],1).cuda()
         g_type = 100*torch.ones(hand_side.shape[0],1).cuda()
-        
+
+        # first objects are only included for evaluation if they are associated to a hand
+        # second objects are only included for evaluation if they are associated to a first object
+        idx_to_include = torch.range(start = 0, end = len(boxes)-1, dtype = int)[pred_classes==0].tolist()
 
 
         for i in range(len(z_feature)):
@@ -414,8 +419,23 @@ class hoRCNNROIHeads(StandardROIHeads):
                     cls_prob_i = 1 - inter_prob[i][:,0].reshape(-1)
                     max_val  = torch.max(cls_prob_i)
                     idx = torch.argmax(cls_prob_i)
-                    interaction[i] = -1 if max_val.item() <0.7 else idx.item()
-    
+                    #interaction[i] = -1 if max_val.item() <0.7 else idx.item()
+                   
+
+
+
+                    # interaction[i] = -1 if max_val.item() <self.cfg.HAND_RELA else idx.item()
+                    if max_val.item() >= self.cfg.HAND_RELA:
+
+                        if idx.item() not in idx_to_include:
+                            interaction[i] = len(idx_to_include)
+                            idx_to_include.append(idx.item())
+                        else:
+                           
+                            interaction[i] = idx_to_include.index(idx.item())
+                    else:
+                        interaction[i] = -1
+
                     contact_state[i] = 0 if interaction[i] == -1 else torch.argmax(inter_prob[i][int(idx.item())][1:]).item()+1
                     score[i] = max_val
                     
@@ -430,17 +450,28 @@ class hoRCNNROIHeads(StandardROIHeads):
                     cls_prob_i = 1 - inter_prob[i][:,0].reshape(-1)
                     max_val  = torch.max(cls_prob_i)
                     idx = torch.argmax(cls_prob_i)
-                    interaction[i] = -1 if max_val.item() <0.5 else idx.item()
+
+                    if max_val.item() >= self.cfg.OBJ_RELA and t_type[i] == 2:
+                        if idx.item() not in idx_to_include:
+                            interaction[i] = len(idx_to_include)
+                            idx_to_include.append(idx.item())
+                        else:
+                            
+                            interaction[i] = idx_to_include.index(idx.item())
+
+                    else:
+                        interaction[i] = -1
+
                     score[i] = max_val
-            except:
+            except Exception as e:
                 pdb.set_trace()
+                print(e)
                 print("error in assign values")
+
             
         
-               
-        
-        return [torch.cat((boxes, interaction, h_side,g_type, t_type, contact_state, score, 1-inter_prob[:,:,0]), dim=1)], [Instances(image_size = image_size, pred_boxes = pred_boxes_, pred_classes = pred_classes_, scores = pred_scores_)]
-        
+        return [torch.cat((boxes, interaction, h_side, g_type, t_type, contact_state, score, grasp, touch_type,  1-inter_prob[:,:,0]), dim=1)[idx_to_include]], [Instances(image_size = image_size, pred_boxes = pred_boxes_[idx_to_include], pred_classes = pred_classes_[idx_to_include], scores = pred_scores_[idx_to_include])]
+           
 
     def _forward_z(self, features, proposals, images):
 

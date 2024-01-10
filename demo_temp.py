@@ -220,9 +220,6 @@ class Hands:
         a,b,c,d = self.second_obj_bbox
 
         return (a,b,c,d)
-    
-    def message(self):
-        return str(self.hand_side) + ' | ' + str(self.contactState) + ' | ' + str(self.hand_bbox).replace('[','').replace(']','') + ' | ' +  str(self.obj_bbox).replace('[','').replace(']','') + ' | ' +str(self.obj_touch) + ' | ' + str(self.second_obj_bbox).replace('[','').replace(']','') + " | " + str(self.grasp) +'\n'
 
 
 def deal_output(im, predictor):
@@ -336,9 +333,8 @@ def main():
     print(f' a folder of images...')
     images = glob.glob(f'{args.data_dir}/*')
     # f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
-    # f = open("/w/fouhey/hands2/allMerged7Splits/TRAIN.txt")
     # f = open("/w/fouhey/hands2/allMerged7Splits/TEST.txt")
-    f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/TRAIN.txt")
+    f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/VAL.txt")
     images = f.readlines()
 
      # outputs
@@ -348,10 +344,30 @@ def main():
     os.makedirs(save_mask_dir, exist_ok=True)
 
     save_img = args.save_img == 'True' 
-    save_mask_dir = f"{save_dir}/masks" 
-    os.makedirs(save_mask_dir, exist_ok=True)
+    
 
-    # images = images[:100]
+    # random.seed(56)
+    # random.shuffle(images)
+
+    # images = images[:1000]
+
+   
+
+    #for certain images only
+    # images = []
+
+    # img_src_main_paper = "/home/evacheng/ego_images/ego4d/"
+    # save_dir = "/home/evacheng/ego_images_compare_before/"
+
+    # for img in glob.glob("/home/evacheng/ego_images/ego4d/*-a.png"):
+    #     img_name = img.replace(img_src_main_paper, "").replace('-a', '')
+    #     images.append(img_name)
+    
+    # # save_dir = img_src_main_paper.replace("selected", "selected_generated_75337")
+    # os.makedirs(save_dir, exist_ok = True)
+
+    # save_mask_dir = f"{save_dir}/masks" 
+    # os.makedirs(save_mask_dir, exist_ok=True)
 
     
 
@@ -363,14 +379,23 @@ def main():
 
     
 
-
+#     images = ["EK_0028_P12_101_frame_0000009276",  "EK_0056_P04_121_frame_0000021397", "ND_t_-Ap405kCU_frame004251", 
+#    "EK_0076_P02_03_frame_0000044445", "ND_pLMB4SoBRfw_frame000301", "ND_0UOYuCypBDQ_frame004201", "ND_x7jpPPHvPxE_frame012001", "ND_pp8HbHD_w5Q_frame011701", "ND_r4Xdg7B2_pM_frame020034", "ND_O5MsVRbjsYc_frame000001", "ND_r_5wbjSD83Y_frame007649"
+#               ,"CC_000000005632", "EK_0045_P30_111_frame_0000065109", "EK_0035_P27_101_frame_0000018055", "CC_000000174657", "ND_461kcTqif-c_frame014501", "ND_u9MjbLzft0E_frame003501",
+#               "ND_QOS5Ta8VobU_frame008971", "ND_bIUhdpQ9big_frame010001"]
+#     images = [x+".jpg" for x in images]
+  
+    # has_more_sec_obj_img_count = 0
+    # pdb.set_trace()
+    images = ["952f40df-b1d7-4562-afe4-2a4ff569e949_88231.png", "a7bffd05-bb79-45cd-8bd1-8c30c5553ddf_1850.png",]
+   
     # loop
     for test_img in tqdm(images):
         test_img = test_img.replace("\n", "")
         print(f'Processing: {test_img}')
         if os.path.exists(os.path.join(args.data_dir, test_img)) is False:
             print(os.path.join(args.data_dir, test_img))
-            pdb.set_trace()
+            # pdb.set_trace()
             continue
         im = cv2.imread(os.path.join(args.data_dir, test_img))
         im_name = os.path.split(test_img)[-1][:-4]
@@ -383,22 +408,14 @@ def main():
         #save masks and vis
         hand_lists = deal_output(im = im, predictor= predictor)
 
-        message_txt = []
-
         for hands in hand_lists:
 
             if save_img:
                 hands.save_masks(save_dir, im, test_img.split('/')[-1])
 
             img['predictions'].append(hands.get_json())
-            message_txt.append(hands.message())
 
-        
-        txt_path = os.path.join(save_dir, test_img+'.txt')
-        g = open(txt_path, "w+")
-        g.writelines(message_txt)
-        g.close()
-
+            
         # vis and save
         if save_img:
             im = vis_per_image(im, img['predictions'], im_name+'.png', save_mask_dir, use_simple=False)
@@ -409,8 +426,6 @@ def main():
 
     f = open(json_path, 'w')
     json.dump(res, f, indent=4)
-
-
     
 
 if __name__ == '__main__':

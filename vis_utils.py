@@ -173,7 +173,7 @@ def draw_secondobj_mask(im, draw, bbox, mask, width, height, font, scale, use_si
     
     # text
     draw = ImageDraw.Draw(im)
-    draw.rectangle([bbox[0], max(0, bbox[1]-30), bbox[0]+62, max(0, bbox[1]-30)+30], fill=(255, 255, 255), outline=secondobj_rgb, width=4)
+    # draw.rectangle([bbox[0], max(0, bbox[1]-30), bbox[0]+62, max(0, bbox[1]-30)+30], fill=(255, 255, 255), outline=secondobj_rgb, width=4)
 
     return im
 

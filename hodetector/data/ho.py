@@ -174,6 +174,7 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
     # print(f'extra_annotation_keys = {extra_annotation_keys}')
 
     num_instances_without_valid_segmentation = 0
+    images_without_valid_segmentation = []
 
     for (img_dict, anno_dict_list) in imgs_anns:
         record = {}
@@ -221,6 +222,7 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
                         width = img_dict["width"]
                         x,y,w,h = obj["bbox"]
                         segm = seg_to_poly(x,y,w,h, np.ones((width,height,1)))
+                        images_without_valid_segmentation.append(anno)
 
                         assert len(segm) != 0
 
@@ -280,6 +282,10 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
             + "There might be issues in your dataset generation process.  Please "
             "check https://detectron2.readthedocs.io/en/latest/tutorials/datasets.html carefully"
         )
+
+        print(images_without_valid_segmentation)
+        f = open("./invalid_seg.json", "w+")
+        json.dump(images_without_valid_segmentation, f, indent=4)
     
     return dataset_dicts
 
