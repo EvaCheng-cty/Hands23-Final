@@ -338,7 +338,7 @@ def main():
     # f = open("/w/fouhey/hands2/allMerged7Splits/VAL.txt")
     # f = open("/w/fouhey/hands2/allMerged7Splits/TRAIN.txt")
     # f = open("/w/fouhey/hands2/allMerged7Splits/TEST.txt")
-    f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/TRAIN.txt")
+    f = open("/w/dandans/datasets/hands2_ego4d_v2/ego4dSplits/VAL.txt")
     images = f.readlines()
 
      # outputs
@@ -350,6 +350,10 @@ def main():
     save_img = args.save_img == 'True' 
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_mask_dir, exist_ok=True)
+
+
+    # random.seed(52)
+    # random.shuffle(images)
 
     # images = images[:100]
 
@@ -391,13 +395,13 @@ def main():
                 hands.save_masks(save_dir, im, test_img.split('/')[-1])
 
             img['predictions'].append(hands.get_json())
-            message_txt.append(hands.message())
+            # message_txt.append(hands.message())
 
         
-        txt_path = os.path.join(save_dir, test_img+'.txt')
-        g = open(txt_path, "w+")
-        g.writelines(message_txt)
-        g.close()
+        # txt_path = os.path.join(save_dir, test_img+'.txt')
+        # g = open(txt_path, "w+")
+        # g.writelines(message_txt)
+        # g.close()
 
         # vis and save
         if save_img:

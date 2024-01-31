@@ -91,6 +91,8 @@ from hodetector.modeling import roi_heads
 # validation dataset 
 _datasets_root = "/launch/evacheng/datasets"
 
+# _datasets_root = "/launch/evacheng/test_dataset"
+
 #mask_source = "SAM"
 mask_source = "Ayda"
 
@@ -98,10 +100,12 @@ image_source = "val"
 # image_source = "val_unblur"
 
 register_coco_instances(name = '100DOH_hand_VAL', metadata = {}, json_file = os.path.join(_datasets_root, "annotations", mask_source, "val.json"), image_root = os.path.join(_datasets_root, image_source))
+# register_coco_instances(name = '100DOH_hand_VAL', metadata = {}, json_file = os.path.join(_datasets_root, "annotations", "val.json"), image_root = "/w/fouhey/hands2/allMerged7Blur")
 MetadataCatalog.get(f'100DOH_hand_VAL').set(evaluator_type='coco')
 
 
-
+results_to_save = {}
+save_dir = ''
 
 class CosCOCOEVAL(COCOeval_opt):
     
@@ -380,7 +384,7 @@ class CosEvaluator(COCOEvaluator):
         assert len(class_names) == precisions.shape[2]
 
 
-        # pdb.set_trace()
+        
 
         results_per_category = []
         for idx, name in enumerate(class_names):
@@ -405,6 +409,9 @@ class CosEvaluator(COCOEvaluator):
             numalign="left",
         )
         self._logger.info("Per-category {} AP: \n".format(iou_type) + table)
+        
+        results_to_save["AP-50"] = {key:value for (key,value) in zip(results_flatten[0::2], results_flatten[1::2])}
+
 
         results_per_category = []
         for idx, name in enumerate(class_names):
@@ -415,7 +422,7 @@ class CosEvaluator(COCOEvaluator):
             ap = np.mean(precision) if precision.size else float("nan")
             results_per_category.append(("{}".format(name), float(ap * 100)))
         
-        # pdb.set_trace()
+        
 
         # tabulate it - added information about per-category AP
         N_COLS = min(6, len(results_per_category) * 2)
@@ -429,6 +436,13 @@ class CosEvaluator(COCOEvaluator):
             numalign="left",
         )
         self._logger.info("Per-category {} AP: \n".format(iou_type) + table)
+
+        results_to_save["mAP"] = {key:value for (key,value) in zip(results_flatten[0::2], results_flatten[1::2])}
+
+        f = open(os.path.join(save_dir, "result.json"), "w")
+        json.dump(results_to_save, f, indent = 4)
+        f.close()
+       
 
         results.update({"AP-" + name: ap for name, ap in results_per_category})
         return results
@@ -456,26 +470,67 @@ class Trainer(DefaultTrainer):
             return DatasetEvaluators(evaluator_list)
 
 
+def set_cfg(args):
+
+    cfg = get_cfg()
+    cfg.merge_from_file("./faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
+
+    if args.model_weights is not None:
+        cfg.MODEL.WEIGHTS = args.model_weights
+    else:
+        cfg.MODEL.WEIGHTS = args.model_weights
+    
+    cfg.OUTPUT_DIR = args.save_dir
+
+    thresh = args.thresh if args.thresh is not None else 0.3
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = float(thresh)
+
+    hand_thresh = args.hand_thresh if args.hand_thresh is not None else 0.7
+    cfg.HAND = float(hand_thresh)
+
+    first_obj_thresh = args.first_obj_thresh if args.first_obj_thresh is not None else 0.5
+    cfg.FIRSTOBJ = float(first_obj_thresh)
+    
+
+    second_obj_thresh = args.second_obj_thresh if args.second_obj_thresh is not None else thresh
+    cfg.SECONDOBJ = float(second_obj_thresh)
+
+    cfg.HAND_RELA = float(args.hand_rela) if args.hand_rela is not None else 0.1
+    cfg.OBJ_RELA = float(args.obj_rela) if args.obj_rela is not None else 0.7
+
+    cfg.freeze()
+
+
+
+
+    return cfg
    
 
 
 def main(args):
 
-    #load the config file, configure the threshold value, load weights 
-    cfg = get_cfg()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--thresh") 
+    parser.add_argument("--hand_thresh")
+    parser.add_argument("--first_obj_thresh")
+    parser.add_argument("--second_obj_thresh")
+    parser.add_argument("--hand_rela")
+    parser.add_argument("--obj_rela")
+
+  
+    parser.add_argument("--model_weights", default=f"/y/evacheng/final_weights/sam_blur_inter_fixed_model_0399999.pth")
+    parser.add_argument("--data_dir", default=f"/w/fouhey/hands2/allMerged7Blur/")
+    parser.add_argument("--save_dir", default=f"/launch/evacheng/vis")
+    parser.add_argument("--save_img", default = 'True')
+    args = parser.parse_args()
     
-    cfg.HAND = 0.8
-    cfg.FIRSTOBJ = 0.5
-    cfg.SECONDOBJ = 0.3
 
-    cfg.HAND_RELA = 0.7
-    cfg.OBJ_RELA = 0.5
+    cfg = set_cfg(args)
 
-    cfg.merge_from_file("./faster_rcnn_X_101_32x8d_FPN_3x_100DOH.yaml")
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.3  # set threshold for this model
+    
 
-    cfg.OUTPUT_DIR = "/home/evacheng/new_val_results_450k/sam-ayda/"
-    os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+    global save_dir
+    save_dir = arg.save_dir
 
     #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_on_not_blur_model_0399999.pth"
     #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_sam_final_0399999.pth"
