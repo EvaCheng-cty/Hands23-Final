@@ -532,10 +532,6 @@ def main(args):
     global save_dir
     save_dir = arg.save_dir
 
-    #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_on_not_blur_model_0399999.pth"
-    #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_sam_final_0399999.pth"
-
-    #cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_on_blur_model_0444999.pth"
     cfg.MODEL.WEIGHTS = "/y/evacheng/final_weights/final_sam_final_0444999.pth"
 
     cfg.freeze()

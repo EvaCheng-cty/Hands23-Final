@@ -58,12 +58,15 @@ def annotations_to_instances(annos, image_size, mask_format="polygon", file_name
     target.gt_interaction = torch.stack(interaction, dim=0)
     
   
-    handId = [torch.tensor(obj["handId"]) for obj in annos]
-    target.gt_handId = torch.stack(handId, dim=0)
-    objectId = [torch.tensor(obj["objectId"]) for obj in annos]
-    target.gt_objectId = torch.stack(objectId, dim=0)
-    secondObjectId = [torch.tensor(obj["secondObjectId"]) for obj in annos]
-    target.gt_secondObjectId = torch.stack(secondObjectId, dim=0)
+    # handId = [torch.tensor(obj["handId"]) for obj in annos]
+    # target.gt_handId = torch.stack(handId, dim=0)
+    # objectId = [torch.tensor(obj["objectId"]) for obj in annos]
+    # target.gt_objectId = torch.stack(objectId, dim=0)
+    # secondObjectId = [torch.tensor(obj["secondObjectId"]) for obj in annos]
+    # target.gt_secondObjectId = torch.stack(secondObjectId, dim=0)
+
+    Id = [torch.tensor(obj["id"]) for obj in annos]
+    target.gt_id =  torch.stack(Id, dim=0)
 
     hand_side = [torch.tensor(obj["handside"]) for obj in annos]
     target.gt_handSide = torch.stack(hand_side, dim=0)
@@ -77,11 +80,9 @@ def annotations_to_instances(annos, image_size, mask_format="polygon", file_name
 
     assert target.gt_interaction != None
 
-    # try:
-    #     assert target.gt_interaction != None
-    # except:
+    # pdb.set_trace()
 
-    #     print("error!")
+   
 
     return target
 

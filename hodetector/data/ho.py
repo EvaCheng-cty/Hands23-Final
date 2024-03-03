@@ -24,6 +24,7 @@ import json
 
 import cv2
 import io
+import pdb
 
 
 __all__ = ["load_ho_voc_instances", "register_ho_pascal_voc"]
@@ -43,7 +44,6 @@ def get_mask(class_id, row_num, im_id, mask_dir, dirname):
         mask = cv2.imread(mask_d)
         L = len(mask)
     except:
-        # pdb.set_trace()
         try:
             im = cv2.imread(dirname+im_id)
             size = im.shape
@@ -51,7 +51,6 @@ def get_mask(class_id, row_num, im_id, mask_dir, dirname):
             #pdb.set_trace()
             print("error")
 
-        # print("********ERROR: Can't find mask: "+ mask_d +" !*************")
         return np.ones(shape = (size[0], size[1], 1)).astype(bool), mask_d
 
     mask = mask[:,:,0] > 128
@@ -97,7 +96,6 @@ def load_ho_voc_instances(json_file, image_root, dataset_name=None, extra_annota
     json_file = PathManager.get_local_path(json_file)
 
 
-    print(json_file)
     assert os.path.exists(json_file)
 
     with contextlib.redirect_stdout(io.StringIO()):
@@ -185,6 +183,8 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
 
         objs = []
 
+        # pdb.set_trace()
+
         count = 0
         for anno in anno_dict_list:
             # Check that the image_id in this annotation is the same as
@@ -241,32 +241,23 @@ Category ids in annotations are not in [1, #categories]! We'll apply a mapping f
                         "but this id does not exist in 'categories' of the json file."
                     ) from e
             
-            obj["handId"] = -1
-            obj['objectId'] = -1
-            obj['secondObjectId'] = -1
-
-            if obj["category_id"] == 0:
-                obj["handId"] = count
-            elif obj["category_id"] == 1:
-                obj['objectId'] = count
-            else:
-                obj['secondObjectId'] = count
             
-            count = count +1 
-
             assert obj["tooltype"] < 7, str(obj["tooltype"])
+
 
             if obj["tooltype"] == -1:
                 obj["tooltype"] = 100
             
-            if obj["isincontact"] is None:
+            if obj["isincontact"] is None or obj['isincontact'] == -1:
                 obj["isincontact"] = 100
+            
 
             if obj["handside"] == -1:
                 obj["handside"] = 2
             
             if obj["grasptype"] ==-1:
                 obj["grasptype"] = 100
+            
             
             objs.append(obj)
 

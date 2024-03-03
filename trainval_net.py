@@ -51,10 +51,11 @@ import pdb
 
 
 _datasets_root = "/home/evacheng/datasets/SAM/"
+_annotation_root = '/launch/evacheng/Hands23_Train_New/'
 
 #split changed based on dataset //Feb 5 2023
 for d in ["TRAIN"]:
-    register_ho_pascal_voc(name=f'100DOH_hand_{d}',dirname=_datasets_root, year = 2007, split=d, json_file=os.path.join(_datasets_root, "annotations", d.lower()+".json"), class_names=["hand", "firstobject", "secondobject"])
+    register_ho_pascal_voc(name=f'100DOH_hand_{d}',dirname=_datasets_root, year = 2007, split=d, json_file=os.path.join(_annotation_root, "annotations", d.lower()+".json"), class_names=["hand", "firstobject", "secondobject"])
     MetadataCatalog.get(f'100DOH_hand_{d}').set(evaluator_type='coco')
 
 

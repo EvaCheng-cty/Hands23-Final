@@ -242,7 +242,7 @@ class hoRCNNROIHeads(StandardROIHeads):
 
 
 
-    def get_PF(self, z_feature, bbox, handId, objectId, secondObjectId):
+    def get_PF(self, z_feature, bbox, classes):
 
        
 
@@ -267,7 +267,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         diag = 0
         for i in range(N):
             # touch[i] <=4 => tools or containers
-            if handId[i]>=0 or objectId[i]>=0:
+            if classes[i]==0 or classes[i]==1:
                 x1,y1,x2,y2 = bbox[i]
                 x1 = x1.item()
                 x2 = x2.item()
@@ -282,7 +282,7 @@ class hoRCNNROIHeads(StandardROIHeads):
                 PF[i,j, F:] = z_feature[j]
 
                 #hand-versus-objects and objects-versus-second objects
-                if (handId[i]>=0 and objectId[j]>=0) or (objectId[i]>=0 and secondObjectId[j]>=0):
+                if (classes[i]==0 and classes[j]==1) or (classes[i]==1 and classes[j]==2):
                     X1,Y1,X2,Y2 = bbox[j]
                     X1 = X1.item()
                     X2 = X2.item()
@@ -486,10 +486,14 @@ class hoRCNNROIHeads(StandardROIHeads):
         except:
             pdb.set_trace()
             print("Error!")
+        
+        # pdb.set_trace()
 
-        handId = proposals[0].get('gt_handId').clone().detach()
-        objectId = proposals[0].get('gt_objectId').clone().detach()
-        secondObjectId = proposals[0].get('gt_secondObjectId').clone().detach()
+        # handId = proposals[0].get('gt_handId').clone().detach()
+        # objectId = proposals[0].get('gt_objectId').clone().detach()
+        # secondObjectId = proposals[0].get('gt_secondObjectId').clone().detach()
+
+        gt_id = proposals[0].get('gt_id').clone().detach()
         bboxes = proposals[0].get('proposal_boxes').tensor.clone().detach()
         gt_boxes = proposals[0].get('gt_boxes').tensor.clone().detach()
 
@@ -497,6 +501,11 @@ class hoRCNNROIHeads(StandardROIHeads):
         gt_contactState = proposals[0].get('gt_contactState').clone().detach()
         gt_touch = proposals[0].get('gt_touch').clone().detach()
         gt_grasp = proposals[0].get('gt_grasp').clone().detach()
+
+        gt_classes = proposals[0].get('gt_classes').clone().detach()
+
+
+        # pdb.set_trace()
 
         length = z_feature.shape[0]
    
@@ -522,7 +531,7 @@ class hoRCNNROIHeads(StandardROIHeads):
         
         length = len(iou)
 
-        PF = self.get_PF(z_feature[iou], bboxes[iou], handId[iou], objectId[iou], secondObjectId[iou])
+        PF = self.get_PF(z_feature[iou], bboxes[iou],gt_classes[iou])
 
        
       
@@ -535,17 +544,26 @@ class hoRCNNROIHeads(StandardROIHeads):
             pdb.set_trace()
        
 
+        # for i in range(length):
+        #     if handId[iou[i]] >= 0 or objectId[iou[i]] >= 0:
+        #         for j in range(length):
+        #             if (handId[iou[i]] >= 0 and objectId[iou[j]] >=0) :
+        #                 PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == objectId[iou[j]] else 0
+        #             elif (objectId[iou[i]] >=0 and gt_touch[iou[i]] == 2 and secondObjectId[iou[j]] >= 0):
+        #                 PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == secondObjectId[iou[j]] else 0
+                       
         for i in range(length):
-            if handId[iou[i]] >= 0 or objectId[iou[i]] >= 0:
+            if gt_classes[iou[i]] ==0 or gt_classes[iou[i]] == 1:
                 for j in range(length):
-                    if (handId[iou[i]] >= 0 and objectId[iou[j]] >=0) :
-                        PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == objectId[iou[j]] else 0
-                    elif (objectId[iou[i]] >=0 and gt_touch[iou[i]] == 2 and secondObjectId[iou[j]] >= 0):
-                        PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == secondObjectId[iou[j]] else 0
+                    if (gt_classes[iou[i]] ==0 and gt_classes[iou[j]] == 1) :
+                        PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == gt_id[iou[j]] else 0
+                    elif (gt_classes[iou[i]] == 1 and gt_touch[iou[i]] == 2 and gt_classes[iou[j]] == 2):
+                        PL[i][j] = gt_contactState[iou[i]] if interaction[iou[i]] == gt_id[iou[j]] else 0
                        
         
        
-       
+        if torch.min(PL).item() < 0:
+            pdb.set_trace()
 
         pred_z = self.z_head(torch.flatten(PF, start_dim=0, end_dim=1))
         pred_h = self.h_head(z_feature[iou])
@@ -555,8 +573,6 @@ class hoRCNNROIHeads(StandardROIHeads):
         
         assert pred_z.shape[0] == torch.flatten(PL, start_dim=0, end_dim=1).shape[0]
         losses_inter = self.z_head.losses(pred_z, torch.flatten(PL, start_dim=0, end_dim=1))
-
-    
 
         assert pred_h.shape[0] == gt_handSide[iou].shape[0]
         losses_side = self.h_head.losses(pred_h, gt_handSide[iou])

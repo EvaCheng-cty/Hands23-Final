@@ -181,7 +181,7 @@ class Hands:
         ims[:,:,:] = 0
         ims[self.hand_mask, :] = 255
 
-        # pdb.set_trace()
+      
         save_dir = os.path.join(save_dir, "masks"+mess)
         img_id = img_id.strip('\n')
         os.makedirs(save_dir, exist_ok=True)
@@ -299,7 +299,7 @@ def set_cfg(args):
     second_obj_thresh = args.second_obj_thresh if args.second_obj_thresh is not None else thresh
     cfg.SECONDOBJ = float(second_obj_thresh)
 
-    # cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0
+    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1
 
     cfg.HAND_RELA = float(args.hand_rela) if args.hand_rela is not None else 0.1
     cfg.OBJ_RELA = float(args.obj_rela) if args.obj_rela is not None else 0.7
@@ -350,13 +350,6 @@ def main():
     save_img = args.save_img == 'True' 
     save_mask_dir = f"{save_dir}/masks" 
     os.makedirs(save_mask_dir, exist_ok=True)
-
-
-    # random.seed(52)
-    # random.shuffle(images)
-
-    # images = images[:100]
-
     
 
     # save results
@@ -395,13 +388,10 @@ def main():
                 hands.save_masks(save_dir, im, test_img.split('/')[-1])
 
             img['predictions'].append(hands.get_json())
-            # message_txt.append(hands.message())
+            
 
         
-        # txt_path = os.path.join(save_dir, test_img+'.txt')
-        # g = open(txt_path, "w+")
-        # g.writelines(message_txt)
-        # g.close()
+       
 
         # vis and save
         if save_img:

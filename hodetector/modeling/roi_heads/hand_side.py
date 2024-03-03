@@ -67,19 +67,11 @@ class FastRCNNFCHead(nn.Module):
         if isinstance(input_shape, int):  # some backward compatibility
             input_shape = ShapeSpec(channels=input_shape)
 
-        # input_size = 2089     #input_shape.channels * (input_shape.width or 1) * (input_shape.height or 1)
-        # input_size = 2050
         input_size = 1024
         self.relation_layer = nn.Sequential(nn.Linear(input_size, 1024), nn.ReLU(), nn.Linear(1024, 1024), nn.ReLU(), nn.Linear(1024, 2))
-        # self.relation_loss = nn.CrossEntropyLoss()
-
-        # weight = torch.zeros(2)
-        # weight[0] = 1
-        # weight[1] = 100
+    
         self.relation_loss = nn.CrossEntropyLoss(ignore_index=2)
-        # self.relation_loss = nn.CrossEntropyLoss(ignore_index=2)
-
-        # self.relation_loss = nn.L1Loss()
+        
 
         def normal_init(m, mean, stddev, truncated=False):
             """
